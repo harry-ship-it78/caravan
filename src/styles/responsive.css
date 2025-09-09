@@ -309,42 +309,18 @@ html, body, #root {
 /* Pile stacking - FO:NV style with 36px vertical step */
 .pile-cards.stacked .card.small {
   transition: all 0.3s ease;
+  position: absolute;
 }
 
-.pile-cards.stacked .card.small[data-stack-index="0"] {
-  top: 8px;
+/* Dynamic positioning for spine cards (number/Ace cards) */
+.pile-cards.stacked .card.small:not(.face-card) {
   left: 8px;
-  z-index: 1;
+  /* top will be set dynamically based on spine position */
 }
 
-.pile-cards.stacked .card.small[data-stack-index="1"] {
-  top: 44px; /* 8px + 36px */
-  left: 8px;
-  z-index: 2;
-}
-
-.pile-cards.stacked .card.small[data-stack-index="2"] {
-  top: 80px; /* 8px + 72px */
-  left: 8px;
-  z-index: 3;
-}
-
-.pile-cards.stacked .card.small[data-stack-index="3"] {
-  top: 116px; /* 8px + 108px */
-  left: 8px;
-  z-index: 4;
-}
-
-.pile-cards.stacked .card.small[data-stack-index="4"] {
-  top: 152px; /* 8px + 144px */
-  left: 8px;
-  z-index: 5;
-}
-
-/* Face cards cascade down-right from their base number */
+/* Face cards cascade down-right from their target card */
 .pile-cards.stacked .card.small.face-card {
-  left: 32px; /* shifted right */
-  top: auto; /* will be calculated based on target card */
+  /* position will be set dynamically based on target card */
 }
 
 /* Drag and drop styles */

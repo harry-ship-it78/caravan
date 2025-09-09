@@ -54,29 +54,39 @@ const Pile = ({
         ) : (
           cards.map((card, index) => {
             const isFaceCard = ['J', 'Q', 'K'].includes(card.rank);
-            const baseStackIndex = cards.slice(0, index).filter(c => !['J', 'Q', 'K'].includes(c.rank)).length;
             
-            // Face cards get positioned relative to their target card
-            let stackIndex = baseStackIndex;
+            // Calculate positioning for FO:NV style stacking
             let cardStyle = {};
+            let spineIndex = 0;
             
-            if (isFaceCard && card.targetIndex !== undefined) {
-              const targetCard = cards[card.targetIndex];
-              if (targetCard) {
-                const targetStackIndex = cards.slice(0, card.targetIndex).filter(c => !['J', 'Q', 'K'].includes(c.rank)).length;
+            if (!isFaceCard) {
+              // Number/Ace cards form the spine - count only non-face cards before this one
+              spineIndex = cards.slice(0, index).filter(c => !['J', 'Q', 'K'].includes(c.rank)).length;
+              cardStyle = {
+                top: `${8 + spineIndex * 36}px`, // 36px step so full corner is visible
+                left: `8px`,
+                zIndex: spineIndex + 1
+              };
+            } else {
+              // Face cards cascade down-right from their target card
+              if (card.targetIndex !== undefined && card.targetIndex < index) {
+                const targetCard = cards[card.targetIndex];
+                if (targetCard && !['J', 'Q', 'K'].includes(targetCard.rank)) {
+                  const targetSpineIndex = cards.slice(0, card.targetIndex).filter(c => !['J', 'Q', 'K'].includes(c.rank)).length;
+                  cardStyle = {
+                    top: `${8 + targetSpineIndex * 36 + 20}px`, // 20px down from target
+                    left: `${32}px`, // shifted right
+                    zIndex: index + 20 // higher than spine cards
+                  };
+                }
+              } else {
+                // Default position if no valid target
                 cardStyle = {
-                  top: `${8 + targetStackIndex * 36 + 20}px`, // 20px down-right from target
-                  left: `${32}px`, // shifted right
-                  zIndex: index + 10 // higher than spine cards
+                  top: `${8 + spineIndex * 36 + 20}px`,
+                  left: `${32}px`,
+                  zIndex: index + 20
                 };
               }
-            } else if (!isFaceCard) {
-              // Number/Ace cards form the spine
-              cardStyle = {
-                top: `${8 + baseStackIndex * 36}px`,
-                left: `8px`,
-                zIndex: index + 1
-              };
             }
 
             return (
@@ -84,7 +94,7 @@ const Pile = ({
                 key={`${card.id}-${index}`}
                 card={card}
                 size="small"
-                stackIndex={stackIndex}
+                stackIndex={spineIndex}
                 isFaceCard={isFaceCard}
                 onClick={() => handleCardClick(index)}
                 style={cardStyle}

@@ -17,6 +17,7 @@ function App() {
 
   const [draggedCard, setDraggedCard] = useState(null);
   const [touchMode, setTouchMode] = useState(false);
+  const [manualTouchMode, setManualTouchMode] = useState(false);
 
   // Initialize game
   useEffect(() => {
@@ -34,12 +35,13 @@ function App() {
   // Detect touch device
   useEffect(() => {
     const checkTouch = () => {
-      setTouchMode('ontouchstart' in window || navigator.maxTouchPoints > 0);
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+      setTouchMode(manualTouchMode || hasTouch);
     };
     checkTouch();
     window.addEventListener('resize', checkTouch);
     return () => window.removeEventListener('resize', checkTouch);
-  }, []);
+  }, [manualTouchMode]);
 
   const handleCardSelect = useCallback((card) => {
     if (touchMode) {
@@ -103,6 +105,14 @@ function App() {
         <h1>Caravan Card Game</h1>
         <div className="controls">
           <span>Turn: {gameState.turn}</span>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '14px' }}>
+            <input 
+              type="checkbox" 
+              checked={manualTouchMode} 
+              onChange={(e) => setManualTouchMode(e.target.checked)}
+            />
+            Touch Mode
+          </label>
           <button className="btn" onClick={newGame}>New Game</button>
         </div>
       </div>
