@@ -1,0 +1,370 @@
+:root {
+  --bg: #0e1116;
+  --panel: #151a21;
+  --text: #e8eef7;
+  --muted: #9aa4b2;
+  --accent: #36a3ff;
+  --card-w: 94px;
+  --card-h: 133px;
+  --corner-h: 29px;
+  --gap: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { 
+  height: 100%; 
+  background: var(--bg); 
+  color: var(--text); 
+  margin: 0; 
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; 
+}
+
+.app { 
+  display: grid; 
+  grid-template-rows: auto 1fr auto; 
+  min-height: 100%; 
+}
+
+.topbar, .bottombar { 
+  background: var(--panel); 
+  padding: 10px 14px; 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  flex-wrap: wrap; 
+}
+
+.topbar h1 { 
+  font-size: 18px; 
+  margin: 0; 
+}
+
+.controls { 
+  margin-left: auto; 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+}
+
+.board { 
+  padding: 12px; 
+  display: grid; 
+  grid-template-columns: 1fr; 
+  gap: 16px; 
+}
+
+.side { 
+  background: var(--panel); 
+  border-radius: 10px; 
+  padding: 12px; 
+}
+
+.side h2 { 
+  margin: 0 0 8px 0; 
+  font-size: 16px; 
+}
+
+.piles { 
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); 
+  gap: var(--gap); 
+}
+
+.pile { 
+  background: #0f141b; 
+  border-radius: 8px; 
+  padding: 8px; 
+  min-width: 0; 
+}
+
+.pile-header { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  justify-content: space-between; 
+  margin-bottom: 6px; 
+}
+
+.pile-title { 
+  color: var(--muted); 
+  font-size: 12px; 
+}
+
+.pile-score { 
+  font-weight: 600; 
+}
+
+.pile-reversed { 
+  color: #ffd54a; 
+}
+
+.pile-cards.stacked { 
+  position: relative; 
+  border: 1px dashed rgba(255,255,255,0.1); 
+  border-radius: 8px; 
+  min-height: var(--card-h); 
+  padding: 8px; 
+  overflow: hidden; 
+  touch-action: manipulation; 
+}
+
+.pile-cards .empty { 
+  color: var(--muted); 
+  font-size: 12px; 
+  text-align: center; 
+  padding: 12px 0; 
+}
+
+.card.small { 
+  position: absolute; 
+  width: var(--card-w); 
+  height: var(--card-h); 
+  border-radius: 8px; 
+  background: #f9f6ef; 
+  color: #1b1b1b; 
+  border: 1px solid rgba(0,0,0,0.25); 
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25); 
+  user-select: none; 
+}
+
+.card.red { color: #b00020; }
+.card.black { color: #1b1b1b; }
+
+.card .corner { 
+  position: absolute; 
+  width: 36px; 
+  height: var(--corner-h); 
+  text-align: center; 
+  font-weight: 700; 
+  line-height: 1.1; 
+}
+
+.card .corner.tl { 
+  top: 6px; 
+  left: 6px; 
+}
+
+.card .corner.br { 
+  bottom: 6px; 
+  right: 6px; 
+  transform: rotate(180deg); 
+}
+
+.card .rank { font-size: 14px; }
+.card .suit { font-size: 14px; }
+
+.card .center.small { 
+  position: absolute; 
+  left: 50%; 
+  top: 50%; 
+  transform: translate(-50%, -50%); 
+  font-size: 28px; 
+  opacity: 0.15; 
+}
+
+.card.highlight-target { 
+  outline: 2px solid var(--accent); 
+  outline-offset: 0; 
+}
+
+.card.viewed { 
+  transform: translateY(-2px); 
+  box-shadow: 0 6px 12px rgba(0,0,0,0.35); 
+  z-index: 999 !important; 
+}
+
+.card.removed { 
+  opacity: 0.45; 
+  filter: grayscale(0.4); 
+}
+
+.tap-target-ok { 
+  box-shadow: 0 0 0 2px #34d399 inset; 
+}
+
+.tap-hotspot { 
+  position: absolute; 
+  right: 8px; 
+  bottom: 8px; 
+  z-index: 5; 
+  padding: 6px 10px; 
+  font-size: 12px; 
+  border-radius: 999px; 
+  border: 1px solid rgba(255,255,255,0.25); 
+  background: rgba(255,255,255,0.06); 
+  color: var(--text); 
+}
+
+.btn { 
+  background: var(--accent); 
+  color: white; 
+  border: none; 
+  padding: 8px 16px; 
+  border-radius: 6px; 
+  font-size: 14px; 
+  cursor: pointer; 
+  transition: all 0.2s; 
+}
+
+.btn:hover { 
+  background: #2691e6; 
+}
+
+.btn:disabled { 
+  background: var(--muted); 
+  cursor: not-allowed; 
+}
+
+.hand { 
+  display: flex; 
+  gap: 8px; 
+  flex-wrap: wrap; 
+  justify-content: center; 
+}
+
+.hand .card { 
+  position: relative; 
+  cursor: pointer; 
+  transition: transform 0.2s; 
+}
+
+.hand .card:hover { 
+  transform: translateY(-4px); 
+}
+
+.hand .card.selected { 
+  transform: translateY(-8px); 
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4); 
+  outline: 2px solid var(--accent); 
+}
+
+.hand .card.dragging { 
+  opacity: 0.5; 
+  transform: rotate(5deg); 
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .board { 
+    grid-template-columns: 1fr; 
+    padding: 8px; 
+  }
+  
+  .piles { 
+    grid-template-columns: 1fr; 
+    gap: 8px; 
+  }
+  
+  .topbar, .bottombar { 
+    padding: 8px 12px; 
+    font-size: 14px; 
+  }
+  
+  .topbar h1 { 
+    font-size: 16px; 
+  }
+  
+  .card.small { 
+    width: calc(var(--card-w) * 0.9); 
+    height: calc(var(--card-h) * 0.9); 
+  }
+  
+  .hand { 
+    gap: 6px; 
+  }
+}
+
+/* Touch-specific styles */
+@media (hover: none) and (pointer: coarse) {
+  .card:hover { 
+    transform: none; 
+  }
+  
+  .hand .card:hover { 
+    transform: none; 
+  }
+  
+  .hand .card.selected { 
+    transform: translateY(-4px); 
+  }
+}
+
+/* Animations */
+@keyframes cardDeal {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+.card.dealing {
+  animation: cardDeal 0.3s ease-out;
+}
+
+/* Pile stacking - FO:NV style with 36px vertical step */
+.pile-cards.stacked .card.small {
+  transition: all 0.3s ease;
+}
+
+.pile-cards.stacked .card.small[data-stack-index="0"] {
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+}
+
+.pile-cards.stacked .card.small[data-stack-index="1"] {
+  top: 44px; /* 8px + 36px */
+  left: 8px;
+  z-index: 2;
+}
+
+.pile-cards.stacked .card.small[data-stack-index="2"] {
+  top: 80px; /* 8px + 72px */
+  left: 8px;
+  z-index: 3;
+}
+
+.pile-cards.stacked .card.small[data-stack-index="3"] {
+  top: 116px; /* 8px + 108px */
+  left: 8px;
+  z-index: 4;
+}
+
+.pile-cards.stacked .card.small[data-stack-index="4"] {
+  top: 152px; /* 8px + 144px */
+  left: 8px;
+  z-index: 5;
+}
+
+/* Face cards cascade down-right from their base number */
+.pile-cards.stacked .card.small.face-card {
+  left: 32px; /* shifted right */
+  top: auto; /* will be calculated based on target card */
+}
+
+/* Drag and drop styles */
+.dragging {
+  z-index: 1000;
+  transform: rotate(5deg);
+  opacity: 0.8;
+}
+
+.drop-zone {
+  border: 2px dashed var(--accent);
+  background: rgba(54, 163, 255, 0.1);
+}
+
+.drop-zone.valid {
+  border-color: #34d399;
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.drop-zone.invalid {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
