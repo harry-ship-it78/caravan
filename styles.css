@@ -326,3 +326,101 @@ body {
 .rules h3 { margin: 0 0 8px 0; }
 .rules ul { margin: 0; padding-left: 16px; }
 .rules li { margin-bottom: 6px; }
+
+/* Mobile Layout Styles */
+.app.mobile {
+  /* Use body class to enable mobile viewport simulation */
+}
+
+.app.mobile .topbar {
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.app.mobile .topbar h1 {
+  font-size: 24px;
+  text-align: center;
+}
+
+.app.mobile .controls {
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.app.mobile .controls .checkbox {
+  justify-content: center;
+}
+
+.app.mobile .btn {
+  min-height: 44px; /* Larger tap targets */
+  font-size: 16px;
+  padding: 12px 20px;
+}
+
+.app.mobile .board {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+}
+
+.app.mobile .side {
+  width: 100%;
+}
+
+.app.mobile .piles {
+  grid-template-columns: 1fr; /* Stack piles vertically on mobile */
+  gap: 16px;
+}
+
+.app.mobile .pile {
+  min-height: 150px;
+  padding: 12px;
+}
+
+.app.mobile .card {
+  /* Larger cards for touch targets */
+  width: 80px;
+  height: 112px;
+  cursor: pointer;
+}
+
+.app.mobile .card.small {
+  width: 110px;
+  height: 155px;
+}
+
+.app.mobile .hand .cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.app.mobile .hand .card {
+  margin: 0;
+}
+
+.app.mobile .scoreboard {
+  margin-bottom: 16px;
+}
+
+.app.mobile .divider {
+  margin: 16px 0;
+}
+
+/* Touch-friendly interactions */
+.app.mobile .card.draggable {
+  transition: transform 0.2s ease;
+}
+
+.app.mobile .card.draggable:active {
+  transform: scale(1.05);
+}
+
+.app.mobile .modal {
+  width: 90vw;
+  margin: 20px;
+}
