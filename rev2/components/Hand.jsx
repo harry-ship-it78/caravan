@@ -69,7 +69,6 @@ export default function Hand({ owner, cards, disabled, label = 'Hand' }) {
           const payload = { source: 'hand', owner, cardId: card.id };
 
           const cardProps = {
-            key: card.id,
             className: `card draggable ${card.color}`,
             title: `${card.rank}${glyph} (${card.rank === 'A' ? 'Ace=1' : card.rank === 'J' ? 'Jack' : card.rank === 'Q' ? 'Queen' : card.rank === 'K' ? 'King' : value})`,
           };
@@ -88,7 +87,7 @@ export default function Hand({ owner, cards, disabled, label = 'Hand' }) {
           }
 
           return (
-            <div {...cardProps}>
+            <div key={card.id} {...cardProps}>
               <div className="corner tl">
                 <div className="rank">{card.rank}</div>
                 <div className="suit">{glyph}</div>

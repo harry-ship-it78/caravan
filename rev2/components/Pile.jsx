@@ -250,7 +250,6 @@ export default function Pile({
           };
 
           const cardProps = {
-            key: `${card.id}-${idx}`,
             className: classes.join(' '),
             style: style,
             title: titleFor(card, value),
@@ -267,7 +266,7 @@ export default function Pile({
           }
 
           return (
-            <div {...cardProps}>
+            <div key={`${card.id}-${idx}`} {...cardProps}>
               <div className="corner tl">
                 <div className="rank">{card.rank}</div>
                 <div className="suit">{glyph}</div>
