@@ -13,6 +13,7 @@ import Pile from './components/Pile.jsx';
 import Scoreboard from './components/Scoreboard.jsx';
 import Rules from './components/Rules.jsx';
 import DebugPanel from './components/DebugPanel.jsx';
+import { MobileProvider, useMobile } from './contexts/MobileContext.jsx';
 
 const initialGame = () => {
   const deck = createShuffledDeck();
@@ -35,8 +36,9 @@ const initialGame = () => {
   };
 };
 
-export default function App() {
+function GameContent() {
   const [game, setGame] = useState(initialGame);
+  const { isMobileMode, toggleMobileMode } = useMobile();
 
   // Stable ref for effects/timers
   const gameRef = useRef(game);
@@ -423,10 +425,18 @@ export default function App() {
     !game.gameOver && (game.turn === 'player' || (!game.aiEnabled && game.turn === 'ai'));
 
   return (
-    <div className="app">
+    <div className={`app ${isMobileMode ? 'mobile' : ''}`}>
       <header className="topbar">
         <h1>Caravan Card Game</h1>
         <div className="controls">
+          <label className="checkbox">
+            <input
+              type="checkbox"
+              checked={isMobileMode}
+              onChange={toggleMobileMode}
+            />
+            Mobile Layout
+          </label>
           <label className="checkbox">
             <input
               type="checkbox"
@@ -543,5 +553,13 @@ export default function App() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <MobileProvider>
+      <GameContent />
+    </MobileProvider>
   );
 }

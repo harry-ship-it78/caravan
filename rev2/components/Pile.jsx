@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { formatSuitGlyph, getCardValue, isFaceCard, isNumericOrAce } from '../game/rules.js';
+import { useMobile } from '../contexts/MobileContext.jsx';
 
 export default function Pile({
   owner,
@@ -16,6 +17,7 @@ export default function Pile({
   onCanDropCard
 }) {
   const { reversed, visibleOrder, total } = pileView;
+  const { isMobileMode } = useMobile();
 
   // Separate hover vs drag states (hover shows viewed group; drag shows outline only)
   const [hoverIdx, setHoverIdx] = useState(null);
@@ -167,9 +169,53 @@ export default function Pile({
 
   const clearHover = () => setHoverIdx(null);
 
+  // Touch event handlers for mobile
+  const handleTouchDrop = useCallback((e, idx = null) => {
+    const detail = e.detail;
+    if (!detail) return;
+
+    const dataTransfer = detail.dataTransfer;
+    const raw = dataTransfer.getData('application/json') || dataTransfer.getData('text/plain');
+    if (!raw) return;
+
+    if (idx !== null && detail.type === 'card') {
+      // Card target drop
+      if (!isDropAllowedCard) return;
+      try {
+        const payload = JSON.parse(raw);
+        if (onCanDropCard && !onCanDropCard(idx, payload)) return;
+      } catch { /* ignore */ }
+      onDropCard(idx, raw);
+    } else if (detail.type === 'container') {
+      // Container drop
+      if (!isDropAllowedContainer) return;
+      try {
+        const payload = JSON.parse(raw);
+        if (onCanDropContainer && !onCanDropContainer(payload)) return;
+      } catch { /* ignore */ }
+      onDropContainer(raw);
+    }
+  }, [isDropAllowedCard, isDropAllowedContainer, onDropCard, onDropContainer, onCanDropCard, onCanDropContainer]);
+
+  // Add touch event listeners for mobile mode
+  useEffect(() => {
+    if (!isMobileMode) return;
+
+    const pileElement = document.querySelector(`[data-pile="${owner}-${pileIndex}"]`);
+    if (!pileElement) return;
+
+    const handleTouchDropEvent = (e) => handleTouchDrop(e);
+    pileElement.addEventListener('touchdrop', handleTouchDropEvent);
+
+    return () => {
+      pileElement.removeEventListener('touchdrop', handleTouchDropEvent);
+    };
+  }, [isMobileMode, owner, pileIndex, handleTouchDrop]);
+
   return (
     <div
       className="pile"
+      data-pile={`${owner}-${pileIndex}`}
       onDragOver={handleContainerDragOver}
       onDrop={handleContainerDrop}
     >
@@ -203,18 +249,25 @@ export default function Pile({
             zIndex: (idx + 1) + (viewedGroup.has(idx) ? 200 : 0)
           };
 
+          const cardProps = {
+            key: `${card.id}-${idx}`,
+            className: classes.join(' '),
+            style: style,
+            title: titleFor(card, value),
+            onPointerEnter: () => setHoverIdx(idx),
+            onPointerLeave: () => setHoverIdx(null),
+            onDragOver: (e) => handleCardDragOver(e, idx),
+            onDragLeave: handleCardDragLeave,
+            onDrop: (e) => handleCardDrop(e, idx),
+          };
+
+          // Add drop target data for touch events
+          if (isFace && isDropAllowedCard) {
+            cardProps['data-drop-target'] = `card-${idx}`;
+          }
+
           return (
-            <div
-              key={`${card.id}-${idx}`}
-              className={classes.join(' ')}
-              style={style}
-              title={titleFor(card, value)}
-              onPointerEnter={() => setHoverIdx(idx)}
-              onPointerLeave={() => setHoverIdx(null)}
-              onDragOver={(e) => handleCardDragOver(e, idx)}
-              onDragLeave={handleCardDragLeave}
-              onDrop={(e) => handleCardDrop(e, idx)}
-            >
+            <div {...cardProps}>
               <div className="corner tl">
                 <div className="rank">{card.rank}</div>
                 <div className="suit">{glyph}</div>
