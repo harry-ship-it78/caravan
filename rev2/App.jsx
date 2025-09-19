@@ -14,6 +14,7 @@ import Scoreboard from './components/Scoreboard.jsx';
 import Rules from './components/Rules.jsx';
 import DebugPanel from './components/DebugPanel.jsx';
 import { MobileProvider, useMobile } from './contexts/MobileContext.jsx';
+import { useViewportScaling } from './hooks/useViewportScaling.js';
 
 const initialGame = () => {
   const deck = createShuffledDeck();
@@ -39,6 +40,7 @@ const initialGame = () => {
 function GameContent() {
   const [game, setGame] = useState(initialGame);
   const { isMobileMode, toggleMobileMode } = useMobile();
+  const { getScalingStyles, getContainerStyles, isScaling } = useViewportScaling(isMobileMode);
 
   // Stable ref for effects/timers
   const gameRef = useRef(game);
@@ -425,7 +427,8 @@ function GameContent() {
     !game.gameOver && (game.turn === 'player' || (!game.aiEnabled && game.turn === 'ai'));
 
   return (
-    <div className={`app ${isMobileMode ? 'mobile' : ''}`}>
+    <div style={getContainerStyles()}>
+      <div className={`app ${isMobileMode ? 'mobile' : ''}`} style={getScalingStyles()}>
       <header className="topbar">
         <h1>Caravan Card Game</h1>
         <div className="controls">
@@ -552,6 +555,7 @@ function GameContent() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
