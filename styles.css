@@ -11,6 +11,7 @@
   --card-border: #cbd5e1;
   --drop: #2563eb33;
   --highlight: #eab308;
+  --pile-gap: 16px;
 }
 
 * { box-sizing: border-box; }
@@ -371,11 +372,14 @@ body {
 }
 
 .app.mobile .piles {
-  grid-template-columns: 1fr; /* Stack piles vertically on mobile */
-  gap: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--pile-gap);
 }
 
 .app.mobile .pile {
+  flex: 1; /* Equal width piles in horizontal layout */
   min-height: 150px;
   padding: 12px;
 }
